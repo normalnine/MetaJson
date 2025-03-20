@@ -1,0 +1,11 @@
+{
+    "userName": "강동현",
+    "age": 100,
+    "height": 300.0,
+    "gender": false,
+    "favoriteFood": [
+        "김밥",
+        "피자",
+        "고기"
+    ]
+}

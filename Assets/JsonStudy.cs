@@ -1,55 +1,86 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using UnityEngine;
 
 [System.Serializable]
 public struct UserInfo
 {
-    // ÀÌ¸§
+    // ì´ë¦„
     public string userName;
-    // ³ªÀÌ
+    // ë‚˜ì´
     public int age;
-    // Å°
+    // í‚¤
     public float height;
-    // ¼ºº° (true : ¿©¼º, false : ³²¼º)
+    // ì„±ë³„ (true : ì—¬ì„±, false : ë‚¨ì„±)
     public bool gender;
-    // ÁÁ¾ÆÇÏ´Â À½½Ä
+    // ì¢‹ì•„í•˜ëŠ” ìŒì‹
     public List<string> favoriteFood;
 }
 
 public class JsonStudy : MonoBehaviour
 {
-    // ³ªÀÇ Á¤º¸
+    // ë‚˜ì˜ ì •ë³´
     public UserInfo myInfo;
 
     void Start()
     {
         myInfo = new UserInfo();
 
-        myInfo.userName = "°­µ¿Çö";
+        myInfo.userName = "ê°•ë™í˜„";
         myInfo.age = 100;
         myInfo.height = 300;
         myInfo.gender = false;
         myInfo.favoriteFood = new List<string>();
-        myInfo.favoriteFood.Add("±è¹ä");
-        myInfo.favoriteFood.Add("ÇÇÀÚ");
-        myInfo.favoriteFood.Add("°í±â");
+        myInfo.favoriteFood.Add("ê¹€ë°¥");
+        myInfo.favoriteFood.Add("í”¼ì");
+        myInfo.favoriteFood.Add("ê³ ê¸°");
 
         //{
-        //    "user_name" : "°­µ¿Çö",
+        //    "user_name" : "ê°•ë™í˜„",
         //    "age" : 100,
         //    "height" : 300,
         //    "gender" : false,
-        //    "favoritFood" : ["±è¹ä", "ÇÇÀÚ", "°í±â"]
-        //}
-
-        // myInfo¸¦ Json ÇüÅÂ·Î ¸¸µéÀÚ.
-        string jsonData = JsonUtility.ToJson(myInfo, true);
-        print(jsonData);
+        //    "favoritFood" : ["ê¹€ë°¥", "í”¼ì", "ê³ ê¸°"]
+        //}        
     }
 
     void Update()
     {
-        
+        // 1ë²ˆí‚¤ ëˆ„ë¥´ë©´
+        if(Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            // myInfoë¥¼ Json í˜•íƒœë¡œ ë§Œë“¤ì
+            string jsonData = JsonUtility.ToJson(myInfo, true);
+            print(jsonData);
+            // jsonDataë¥¼ íŒŒì¼ë¡œ ì €ì¥
+            FileStream file = new FileStream(Application.dataPath + "/myinfo.txt", FileMode.Create);
+
+            // json string ë°ì´í„°ë¥¼ byte ë°°ì—´ë¡œ ë§Œë“ ë‹¤
+            byte[] byteData = Encoding.UTF8.GetBytes(jsonData);
+            // byteDataë¥¼ fileì— ì“°ì
+            file.Write(byteData, 0, byteData.Length);
+
+            file.Close();
+        }
+
+        // 2ë²ˆí‚¤ ëˆ„ë¥´ë©´
+        if(Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            // myInfo.txtë¥¼ ì½ì–´ì˜¤ì
+            FileStream file = new FileStream(Application.dataPath + "/myinfo.txt", FileMode.Open);
+            // fileì˜ í¬ê¸°ë§Œí¼ byte ë°°ì—´ì„ í• ë‹¹í•œë‹¤
+            byte[] byteData = new byte[file.Length];
+            // byteDataì— fileì˜ ë‚´ìš©ì„ ì½ì–´ì˜¨ë‹¤.
+            file.Read(byteData, 0, byteData.Length);
+            // íŒŒì¼ì„ ë‹«ì•„ì£¼ì
+            file.Close();
+
+            // byteDataë¥¼ ë¬¸ìì—´ë¡œ ë°”ê¾¸ì
+            string jsonData = Encoding.UTF8.GetString(byteData);
+            // ë¬¸ìì—´ë¡œ ë˜ì–´ìˆëŠ” jsonDataë¥¼ myInfoì— parsingí•œë‹¤.
+            myInfo = JsonUtility.FromJson<UserInfo>(jsonData);
+        }
     }
 }
