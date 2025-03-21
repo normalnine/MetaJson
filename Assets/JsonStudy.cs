@@ -19,31 +19,57 @@ public struct UserInfo
     public List<string> favoriteFood;
 }
 
+[System.Serializable]
+public struct FriendInfo
+{
+    public List<UserInfo> data;
+}
+
 public class JsonStudy : MonoBehaviour
 {
     // 나의 정보
     public UserInfo myInfo;
 
+    // 유저 정보를 여러개 들고 있는 변수
+    public List<UserInfo> friendList = new List<UserInfo>();
+
+    // friendList의 key값을 만드어 주기 위한 구조체
+    FriendInfo info = new FriendInfo();
+
     void Start()
     {
-        myInfo = new UserInfo();
+        for(int i=0; i<10; i++)
+        {
+            myInfo = new UserInfo();
 
-        myInfo.userName = "강동현";
-        myInfo.age = 100;
-        myInfo.height = 300;
-        myInfo.gender = false;
-        myInfo.favoriteFood = new List<string>();
-        myInfo.favoriteFood.Add("김밥");
-        myInfo.favoriteFood.Add("피자");
-        myInfo.favoriteFood.Add("고기");
+            myInfo.userName = "강동현" + i;
+            myInfo.age = 100;
+            myInfo.height = 300;
+            myInfo.gender = false;
+            myInfo.favoriteFood = new List<string>();
+            myInfo.favoriteFood.Add("김밥");
+            myInfo.favoriteFood.Add("피자");
+            myInfo.favoriteFood.Add("고기");
 
+            friendList.Add(myInfo);
+        }
+
+        info.data = friendList;
+
+        string s = JsonUtility.ToJson(info, true);
+        print(s);
+        
         //{
-        //    "user_name" : "강동현",
-        //    "age" : 100,
-        //    "height" : 300,
-        //    "gender" : false,
-        //    "favoritFood" : ["김밥", "피자", "고기"]
-        //}        
+        //    "jsonData" :    {
+        //                        "user_name" : "강동현",
+        //                        "age" : 100,
+        //                        "height" : 300,
+        //                        "gender" : false,
+        //                        "favoritFood" : ["김밥", "피자", "고기"]
+        //                    }
+        //}
+
+
     }
 
     void Update()
@@ -52,7 +78,7 @@ public class JsonStudy : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Alpha1))
         {
             // myInfo를 Json 형태로 만들자
-            string jsonData = JsonUtility.ToJson(myInfo, true);
+            string jsonData = JsonUtility.ToJson(info, true);
             print(jsonData);
             // jsonData를 파일로 저장
             FileStream file = new FileStream(Application.dataPath + "/myinfo.txt", FileMode.Create);
